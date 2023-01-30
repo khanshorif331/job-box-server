@@ -23,6 +23,12 @@ const run = async () => {
 		const jobCollection = db.collection('job')
 		console.log('Database connected')
 
+		app.get('/users', async (req, res) => {
+			const cursor = userCollection.find({})
+			const result = await cursor.toArray()
+			res.send({ status: true, data: result })
+		})
+
 		app.post('/user', async (req, res) => {
 			const user = req.body
 
