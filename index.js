@@ -8,6 +8,9 @@ const cors = require('cors')
 
 app.use(cors())
 app.use(express.json())
+app.use((req, res, next) => {
+	res.header('Access-Control-Allow-Origin', '*')
+})
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jtdcwel.mongodb.net/?retryWrites=true&w=majority`
 const client = new MongoClient(uri, {
