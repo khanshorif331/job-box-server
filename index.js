@@ -102,8 +102,6 @@ const run = async () => {
 		app.patch('/reply', async (req, res) => {
 			const userId = req.body.userId
 			const reply = req.body.reply
-			console.log(reply)
-			console.log(userId)
 
 			const filter = { 'queries.id': ObjectId(userId) }
 
