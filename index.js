@@ -25,6 +25,7 @@ const run = async () => {
 		const db = client.db('job-box-server')
 		const userCollection = db.collection('user')
 		const jobCollection = db.collection('job')
+		const chatCollection = db.collection('chat')
 		console.log('Database connected')
 
 		app.get('/users', async (req, res) => {
@@ -161,6 +162,62 @@ const run = async () => {
 			const result = await cursor.toArray()
 
 			res.send({ status: true, data: result })
+		})
+
+		// chat api
+
+		// get chat by id
+		app.get('/chat', async (req, res) => {
+			const id = req.query.id
+			const result = await chatCollection.findOne({ _id: ObjectId(id) })
+			res.send({ status: true, data: result })
+		})
+		// get chats by email
+		app.get('/chats', async (req, res) => {
+			// email = {candidate:'ami@gmail.com'} or {employer:'me@c.com'}
+			const email = req.query
+			const cursor = await chatCollection.find(email)
+			const result = await cursor.toArray()
+
+			res.send({ status: true, data: result })
+		})
+		app.get('/chatConversation', async (req, res) => {
+			const employer = req.query.employerEmail
+			const candidate = req.query.candidateEmail
+			const filter = {
+				$and: [{ employer }, { candidate }],
+			}
+
+			const result = await chatCollection.findOne(filter)
+			if (result.acknowledged) {
+				return res.send({ status: true, data: result })
+			}
+
+			res.send({ status: false })
+		})
+		app.post('/chat', async (req, res) => {
+			const chat = req.body
+
+			const result = await chatCollection.insertOne(chat)
+
+			res.send(result)
+		})
+		app.patch('/chat', async (req, res) => {
+			const id = req.body.id
+			const message = req.body.message
+			const filter = { _id: ObjectId(id) }
+			const updateDoc = {
+				$push: {
+					messages: message,
+				},
+			}
+
+			const result = await chatCollection.updateOne(filter, updateDoc)
+			if (result.acknowledged) {
+				return res.send({ status: true, data: result })
+			}
+
+			res.send({ status: false })
 		})
 	} finally {
 	}
