@@ -174,6 +174,7 @@ const run = async () => {
 		})
 		// get chats by email
 		app.get('/chats', async (req, res) => {
+			// from frontend query should be like--- chats?candidate=some@gmail.com or employer=me@gmail.com
 			// email = {candidate:'ami@gmail.com'} or {employer:'me@c.com'}
 			const email = req.query
 			const cursor = await chatCollection.find(email)
